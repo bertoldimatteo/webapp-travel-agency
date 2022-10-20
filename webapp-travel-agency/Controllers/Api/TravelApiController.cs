@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 using webapp_travel_agency.Data;
 using webapp_travel_agency.Models;
 
@@ -8,37 +9,51 @@ namespace webapp_travel_agency.Controllers.Api
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    public class TravelController : ControllerBase
+    public class TravelApiController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
 
-        public TravelController(ApplicationDbContext context)
+        public TravelApiController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: api/TravelApi
+        //get for search
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Travel>>> GetTravel()
+        public IActionResult Get(string? name)
         {
-            return await _context.Travels.ToListAsync();
+            IQueryable<Travel> travels;
+
+            if (name != null)
+            {
+                travels = _context.Travels.Where(x => x.Name.ToLower().Contains(name.ToLower()));
+            }
+            else
+            {
+                travels = _context.Travels;
+            }
+
+            return Ok(travels.ToList());
         }
 
-        // GET: api/TravelApi/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Travel>> GetTravel(int id)
         {
-            var travel = await _context.Travels.FindAsync(id);
+            if (_context.Travels == null)
+            {
+                return NotFound();
+            }
+            var smartBox = await _context.Travels.FindAsync(id);
 
-            if (travel == null)
+            if (smartBox == null)
             {
                 return NotFound();
             }
 
-            return travel;
+            return smartBox;
         }
 
-        // PUT: api/TravelApi/5
+
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutTravel(int id, Travel travel)
@@ -69,28 +84,36 @@ namespace webapp_travel_agency.Controllers.Api
             return NoContent();
         }
 
-        // POST: api/TravelApi
+
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Travel>> PostTravel(Travel travel)
+        public async Task<ActionResult<Travel>> PostSmartBox(Travel travel)
         {
+            if (_context.Travels == null)
+            {
+                return Problem("Entity set 'ApplicationDbContext.smartBoxes'  is null.");
+            }
             _context.Travels.Add(travel);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetTravelBox", new { id = travel.Id }, travel);
+            return CreatedAtAction("GetTravel", new { id = travel.Id }, travel);
         }
 
-        // DELETE: api/TravelBoxesApi/5
+
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteTravel(int id)
+        public async Task<IActionResult> DeleteSmartBox(int id)
         {
-            var travel = await _context.Travels.FindAsync(id);
-            if (travel == null)
+            if (_context.Travels == null)
+            {
+                return NotFound();
+            }
+            var smartBox = await _context.Travels.FindAsync(id);
+            if (smartBox == null)
             {
                 return NotFound();
             }
 
-            _context.Travels.Remove(travel);
+            _context.Travels.Remove(smartBox);
             await _context.SaveChangesAsync();
 
             return NoContent();
@@ -98,7 +121,7 @@ namespace webapp_travel_agency.Controllers.Api
 
         private bool TravelExists(int id)
         {
-            return _context.Travels.Any(e => e.Id == id);
+            return (_context.Travels?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

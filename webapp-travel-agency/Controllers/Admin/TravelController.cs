@@ -1,134 +1,156 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using webapp_travel_agency.Data;
 using webapp_travel_agency.Models;
 
-namespace webapp_travel_agency.Controllers
+namespace webapp_travel_agency.Controllers.Admin
 {
     public class TravelController : Controller
     {
-        [HttpGet]
-        public IActionResult Index()
+        private readonly ApplicationDbContext _context;
+
+        public TravelController(ApplicationDbContext context)
         {
-            using (ApplicationDbContext context = new ApplicationDbContext())
-            {
-                List<Travel> travels = context.Travels.ToList();
-                return View("Index", travels);
-            }
+            _context = context;
         }
 
-        public IActionResult Detail(int id)
+        // GET: TravelBoxes
+        public async Task<IActionResult> Index()
         {
-            using (ApplicationDbContext context = new ApplicationDbContext())
-            {
-                Travel travel = context.Travels.Where(travel => travel.Id == id).FirstOrDefault();
-
-                if (travel == null)
-                {
-                    return NotFound("Il viaggio selezionato non esiste o è stato cancellato");
-                }
-                else
-                {
-                    return View("Detail", travel);
-                }
-
-            }
+            return View(await _context.Travels.ToListAsync());
         }
 
+        // GET: TravelBoxes/Details/5
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null || _context.Travels == null)
+            {
+                return NotFound();
+            }
 
-        [HttpGet]
+            var travelBox = await _context.Travels
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (travelBox == null)
+            {
+                return NotFound();
+            }
+
+            return View(travelBox);
+        }
+
+        // GET: TravelBoxes/Create
         public IActionResult Create()
         {
-            ApplicationDbContext context = new ApplicationDbContext();
-
             return View();
         }
 
+        // POST: TravelBoxes/Create
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(Travel formData)
+        public async Task<IActionResult> Create(Travel travel)
         {
-            if (!ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                return View("Create", formData);
+                _context.Add(travel);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
             }
-
-            using (ApplicationDbContext context = new ApplicationDbContext())
-            {
-                Travel travel = new Travel();
-                travel.Name = formData.Name;
-                travel.Photo = formData.Photo;
-                travel.Description = formData.Description;
-                travel.Day = formData.Day;
-                travel.Destination = formData.Destination;
-                travel.Price = formData.Price;
-
-                context.Travels.Add(travel);
-
-                context.SaveChanges();
-
-                return RedirectToAction("Index");
-            }
-        }
-
-        [HttpGet]
-        public IActionResult Update (int id)
-        {
-            ApplicationDbContext context = new ApplicationDbContext();
-
-            Travel travel = context.Travels.Where(travel => travel.Id == id).FirstOrDefault();
-
-            if(travel == null)
-            {
-                return NotFound("Viaggio non trovato");
-            }
-
             return View(travel);
         }
 
-        [HttpPost]
-        public IActionResult Update (int id, Travel formData)
+        // GET: TravelBoxes/Edit/5
+        public async Task<IActionResult> Edit(int? id)
         {
-            ApplicationDbContext context = new ApplicationDbContext();
-
-            Travel travel = context.Travels.Where(travel => travel.Id == id).FirstOrDefault();
-
-            if(travel != null)
+            if (id == null || _context.Travels == null)
             {
-                travel.Name = formData.Name;
-                travel.Photo = formData.Photo;
-                travel.Description = formData.Description;
-                travel.Day = formData.Day;
-                travel.Destination = formData.Destination;
-                travel.Price = formData.Price;
-            }else
-            {
-                return NotFound("Viaggio non trovato");
+                return NotFound();
             }
 
-            context.SaveChanges();
-
-            return RedirectToAction("Index");
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Delete(int id)
-        {
-            ApplicationDbContext context = new ApplicationDbContext();
-
-            Travel travel = context.Travels.Where(travel => travel.Id == id).FirstOrDefault();
-
+            var travel = await _context.Travels.FindAsync(id);
             if (travel == null)
             {
-                return NotFound("Viaggio non trovato");
+                return NotFound();
             }
-            else
+            return View(travel);
+        }
+
+        // POST: TravelBoxes/Edit/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, Travel travel)
+        {
+            if (id != travel.Id)
             {
-                context.Travels.Remove(travel);
-                context.SaveChanges();
+                return NotFound();
             }
 
-            return RedirectToAction("Index");
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(travel);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!TravelBoxExists(travel.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(Index));
+            }
+            return View(travel);
+        }
+
+        // GET: TravelBoxes/Delete/5
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null || _context.Travels == null)
+            {
+                return NotFound();
+            }
+
+            var travelBox = await _context.Travels
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (travelBox == null)
+            {
+                return NotFound();
+            }
+
+            return View(travelBox);
+        }
+
+        // POST: TravelBoxes/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            if (_context.Travels == null)
+            {
+                return Problem("Entity set 'ApplicationDbContext.Travel'  is null.");
+            }
+            var travelBox = await _context.Travels.FindAsync(id);
+            if (travelBox != null)
+            {
+                _context.Travels.Remove(travelBox);
+            }
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
+        private bool TravelBoxExists(int id)
+        {
+            return _context.Travels.Any(e => e.Id == id);
         }
     }
 }

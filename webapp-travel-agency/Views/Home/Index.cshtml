@@ -1,8 +1,65 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
+﻿
+<h1>I nostri viaggi</h1>
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<body onload="cerca()">
+    <div class="container">
+        <input class="js-search" type="text" placeholder="Cerca" />
+        <div class="row">
+        </div>
+    </div>
+    <div class="row js_no_post text-center d-none">
+        <div class="col-12">
+            <h3>Non è selezionato alcun viaggio</h3>
+        </div>
+    </div>
+    <div class="row">
+        @*qui verranno mostrati gli elementi*@
+    </div>
+</body>
+
+<script type="text/javascript">
+    const Travel = document.querySelector(".row");
+    const Search = document.querySelector(".js-search")
+    let list;
+    Search.addEventListener("keyup", cerca)
+    function cerca() {
+        let name = this.value;
+        risultati(name);
+    }
+    function risultati(name) {
+        axios.get("/api/travelapi/get", {
+            params: {
+                name: name
+            }
+        })
+            .then(function (response) {
+                console.log(response);
+                list = response.data;
+                if (list.length > 0) {
+                    Travel.innerHTML = ""
+                    list.forEach(el => {
+                        Travel.innerHTML +=
+                            `
+                                <div class="travelCard">
+                                    <span class="invisible">${el.count}</span>
+                                <div class="travelPhoto">
+                                            <img src="${el.Photo}">
+                                </div>
+                                        <h2>${el.Name}</h2>
+                                        <p>${el.Description}</p>
+                                        <p>Giorni totali del viaggio: ${el.Dayt}</p>
+                                        <p>Destinazioni del viaggio: ${el.Destination}</p>
+                                        <p>Prezzo: ${el.Price} €</p>
+                            </div>
+                            `
+                    } )
+                } else {
+                    Actor.innerHTML = "<h1>non ci sono viaggi</h1>"
+                }
+            })
+            .catch(function (error) {
+                console.log(error);
+            })
+    }
+
+</script>
