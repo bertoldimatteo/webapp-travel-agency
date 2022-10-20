@@ -16,3 +16,20 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.travel-section {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.travelCard {
+    width: 300px;
+    height: 500px;
+    margin: 10px;
+}
+.travelPhoto {
+    width: 100%
+}
+.inline {
+    display: inline-block;
+}
