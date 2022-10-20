@@ -1,0 +1,14 @@
+﻿@model Travel
+@{
+    int count = 0;
+}
+<div class="travelCard">
+    <span class="invisible">@count</span>
+    <img src="@Model.Photo">
+    <h2>@Model.Name</h2>
+    <p>@Model.Description</p>
+    <p>Giorni totali del viaggio: @Model.Day</p>
+    <p>Destinazioni del viaggio: @Model.Destination</p>
+    <p>Prezzo: @Model.Price €</p>
+    <div>
+</div>
