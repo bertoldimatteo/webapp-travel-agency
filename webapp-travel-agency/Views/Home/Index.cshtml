@@ -1,57 +1,60 @@
-﻿
-<h1>I nostri viaggi</h1>
+﻿<h1>Le nostre proposte viaggio</h1>
 
 <body onload="cerca()">
     <div class="container">
-        <input class="js-search" type="text" placeholder="Cerca" />
+        <input class="js-search" type="text" placeholder="Cerca " />
         <div class="row">
         </div>
     </div>
     <div class="row js_no_post text-center d-none">
         <div class="col-12">
-            <h3>Non è selezionato alcun viaggio</h3>
+            <h3>Non hai ricercato alcun viaggio</h3>
         </div>
     </div>
     <div class="travelContainer">
-        @*qui verranno mostrati gli elementi*@
+        @*el*@
     </div>
 </body>
 
+
 <script type="text/javascript">
-    const Travel = document.querySelector(".travelContainer");
+    const travel = document.querySelector(".travelContainer");
     const Search = document.querySelector(".js-search")
     let list;
     Search.addEventListener("keyup", cerca)
     function cerca() {
-        let Name = this.value;
-        risultati(Name);
+        let name = this.value;
+        risultati(name);
     }
-    function risultati(Name) {
+    function risultati(name) {
         axios.get("/api/TravelApi/Get", {
             params: {
-                Name: Name
+                name: name
             }
         })
             .then(function (response) {
-                console.log("Nessun viaggio trovato", response);
-                response.data.forEach(travel => {
-                    Travel.innerHTML +=
-                            `
-                                <div class="travelCard">
-                                    <span class="invisible">${el.count}</span>
-                                <div class="travelPhoto">
-                                            <img src="${el.Photo}">
-                                </div>
-                                        <h2>${el.Name}</h2>
-                                        <p>${el.Description}</p>
-                                        <p>Giorni totali del viaggio: ${el.Day}</p>
-                                        <p>Destinazioni del viaggio: ${el.Destination}</p>
-                                        <p>Prezzo: ${el.Price} €</p>
-                            </div>
-                            `
-                    } )
+                console.log(response);
+                list = response.data;
+                if (list.length > 0) {
+                    travel.innerHTML = ""
+                    list.forEach(el => {
+                        travel.innerHTML +=
+                            `  <div class="col-12 col-md-4 p-2">
+                                            <div class="card post h-100">
+                                                <img src="${el.photo}" class="card-img-top" alt="...">
+                                                <div class="card-body">
+                                                        <h5 class="card-title">${el.name}</h5>
+                                                        <p class="card-text">${el.description}</p>
+                                                        <p class="card-text">Durata viaggio: ${el.day}</p>
+                                                        <p class="card-text">Destinazioni: ${el.destination}</p>
+                                                        <p class="card-text">Prezzo: ${el.price} €</p>
+                                                </div>
+                                              </a>
+                                            </div>
+                                        </div>`
+                    })
                 } else {
-                    Travel.innerHTML = "<h1>non ci sono viaggi</h1>"
+                    travel.innerHTML = "<h1>Attualmente non vi è alcun viaggio</h1>"
                 }
             })
             .catch(function (error) {
