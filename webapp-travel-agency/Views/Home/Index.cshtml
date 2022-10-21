@@ -11,14 +11,16 @@
             <h3>Non hai ricercato alcun viaggio</h3>
         </div>
     </div>
-    <div class="travelContainer">
-        @*el*@
+    <div class="travel-section">
+        <div class="travelCard">
+            @*el*@
+        </div>
     </div>
 </body>
 
 
 <script type="text/javascript">
-    const travel = document.querySelector(".travelContainer");
+    const travel = document.querySelector(".travel-section");
     const Search = document.querySelector(".js-search")
     let list;
     Search.addEventListener("keyup", cerca)
