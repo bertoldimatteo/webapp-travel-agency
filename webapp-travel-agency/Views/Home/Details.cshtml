@@ -1,36 +1,18 @@
-﻿<h1>Ecco il tuo prossimo viaggio:</h1>
-<div class="container">
-    <div class="row">
-        <div class="col-12">
-            <div class="travelCard">
-            </div>
-        </div>
-    </div>
-</div>
-<script type="text/javascript">
-    let id = window.location.pathname.split('/')[3];
-    axios.get(`/api/TravelApi/GetTravel/${id}`).then(res => {
-        const sb = res.data;
-        document.querySelector('.travelCard').innerHTML +=
-            `
-                <div class="col-4 py-2" >
-                    <span class="invisible">${el.count}</span>
-                    <div class="travelPhoto">
-                        <img src="${el.Photo}">
-                    </div>
-                        <h2>${el.Name}</h2>
-                        <p>${el.Description}</p>
-                        <p>Giorni totali del viaggio: ${el.Day}</p>
-                        <p>Destinazioni del viaggio: ${el.Destination}</p>
-                        <p>Prezzo: ${el.Price} €</p>
-                    </div>
-                    <div class="d-flex justify-content-center align-items-center gap-4">
-                        <a href="@Url.Action("Index", "Home")" class="btn btn-primary my-3">Home</a>
-                    </div>
-                </div>
-                `;
-    }).catch(err => {
-        console.log(err);
-    })
+﻿@model Travel
 
-</script>
+<h1>Ecco il tuo prossimo viaggio:</h1>
+<div class="travelCard">
+    <span class="invisible">model.count</span>
+    <div class="travelPhoto">
+        <img src="model.Photo">
+    </div>
+    <h2>model.Name</h2>
+    <p>model.Description</p>
+    <p>Giorni totali del viaggio: model.Day</p>
+    <p>Destinazioni del viaggio: model.Destination</p>
+    <p>Prezzo: model.Price €</p>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

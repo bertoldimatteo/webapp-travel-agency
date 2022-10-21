@@ -33,24 +33,15 @@ namespace webapp_travel_agency.Controllers.Api
                 travels = _context.Travels;
             }
 
-            return Ok(travels.ToList());
+            return Ok(travels.ToList<Travel>());
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Travel>> GetTravel(int id)
+        public IActionResult GetTravelBoxId(int id)
         {
-            if (_context.Travels == null)
-            {
-                return NotFound();
-            }
-            var smartBox = await _context.Travels.FindAsync(id);
+            Travel travel = _context.Travels.Where(p => p.Id == id).FirstOrDefault();
 
-            if (smartBox == null)
-            {
-                return NotFound();
-            }
-
-            return smartBox;
+            return Ok(travel);
         }
 
 

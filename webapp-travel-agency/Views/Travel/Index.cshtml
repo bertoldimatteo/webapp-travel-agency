@@ -24,17 +24,11 @@
             <p>Giorni totali del viaggio: @travel.Day</p>
             <p>Destinazioni del viaggio: @travel.Destination</p>
             <p>Prezzo: @travel.Price €</p>
-            <div class="inline">
-                <a class="btn btn-info" href="@Url.Action("Detail", "Travel", new {id = travel.Id})">Dettaglio</a>
-            </div>
-            <div class="inline">
-                <a class="btn btn-warning" href="@Url.Action("Update", "Travel", new {id = travel.Id})">Modifica</a>
-            </div>
-            <div class="inline">
-                <form asp-controller="Travel" asp-action="Delete" asp-route-id="@travel.Id" method="post">
-                   <button class="btn btn-danger">Elimina</button>
-                </form>
-            </div>
+            <td>
+                <a class="btn btn-outline-info" asp-action="Detail" asp-route-id="@travel.Id">Detail</a>
+                <a class="btn btn-outline-warning" asp-action="Update" asp-route-id="@travel.Id">Update</a>
+                <a class="btn btn-outline-danger" asp-action="Delete" asp-route-id="@travel.Id">Delete</a>
+            </td>
         </div>
     }
 

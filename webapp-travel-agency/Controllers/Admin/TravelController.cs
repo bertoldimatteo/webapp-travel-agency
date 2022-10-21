@@ -14,28 +14,27 @@ namespace webapp_travel_agency.Controllers.Admin
             _context = context;
         }
 
-        // GET: TravelBoxes
+        // GET: Travel
         public async Task<IActionResult> Index()
         {
             return View(await _context.Travels.ToListAsync());
         }
 
-        // GET: TravelBoxes/Details/5
-        public async Task<IActionResult> Details(int? id)
+        // GET: Travel/Detail/5
+        public async Task<IActionResult> Detail(int? id)
         {
             if (id == null || _context.Travels == null)
             {
                 return NotFound();
             }
 
-            var travelBox = await _context.Travels
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (travelBox == null)
+            var travel = await _context.Travels.FirstOrDefaultAsync(m => m.Id == id);
+            if (travel == null)
             {
                 return NotFound();
             }
 
-            return View(travelBox);
+            return View(travel);
         }
 
         // GET: TravelBoxes/Create
@@ -61,7 +60,7 @@ namespace webapp_travel_agency.Controllers.Admin
         }
 
         // GET: TravelBoxes/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Update(int? id)
         {
             if (id == null || _context.Travels == null)
             {
@@ -81,7 +80,7 @@ namespace webapp_travel_agency.Controllers.Admin
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Travel travel)
+        public async Task<IActionResult> Update(int id, Travel travel)
         {
             if (id != travel.Id)
             {
@@ -97,7 +96,7 @@ namespace webapp_travel_agency.Controllers.Admin
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!TravelBoxExists(travel.Id))
+                    if (!TravelExists(travel.Id))
                     {
                         return NotFound();
                     }
@@ -148,7 +147,7 @@ namespace webapp_travel_agency.Controllers.Admin
             return RedirectToAction(nameof(Index));
         }
 
-        private bool TravelBoxExists(int id)
+        private bool TravelExists(int id)
         {
             return _context.Travels.Any(e => e.Id == id);
         }
