@@ -20,7 +20,8 @@ namespace webapp_travel_agency.Models
 
         [Range(1, 999, ErrorMessage = "Il prezzo non può essere inferiore a 1")]
         public int Price { get; set; }
-
+            
+        public List<Message>? Messages { get; set; }
         public Travel()
         {
 
