@@ -37,7 +37,7 @@ namespace webapp_travel_agency.Controllers.Api
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetTravelBoxId(int id)
+        public IActionResult GetTravelId(int id)
         {
             Travel travel = _context.Travels.Where(p => p.Id == id).FirstOrDefault();
 

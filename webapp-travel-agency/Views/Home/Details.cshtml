@@ -16,3 +16,90 @@
     <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
     <a asp-action="Index">Back to List</a>
 </div>
+
+<div class="travelMessage">
+
+</div>
+
+<div class="card my-5">
+    <div class="card-header">
+        <h1>Contattaci</h1>
+    </div>
+    <div class="card-body">
+        <form onsubmit="Send(event)">
+            <div class="mb-3">
+                <label for="contact-email" class="form-label">Email</label>
+                <input type="email" class="form-control" id="contact-email">
+            </div>
+
+            <div class="mb-3">
+                <label for="contact-name" class="form-label">Nome</label>
+                <input type="text" class="form-control" id="contact-name">
+            </div>
+
+            <div class="mb-3">
+                <label for="contact-title" class="form-label">Titolo</label>
+                <input type="text" class="form-control" id="contact-title">
+            </div>
+
+            <div class="mb-3">
+                <label for="contact-text" class="form-label">Testo</label>
+                <textarea class="form-control" id="contact-text" rows="10"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-outline-success">Invia</button>
+        </form>
+    </div>
+</div>
+
+<script type="text/javascript">
+    let id = window.location.pathname.split('/')[3];
+    axios.get(`/api/TravelApi/GetTravelId/${id}`).then(response => {
+        console.log("Dati trovati", response);
+        let travel = response.data;
+        document.querySelector('.travelMessage').innerHTML +=
+            `
+                        <tr>
+                            <td>
+                                <img width="100" height="100" src="${travel.Photo}" class="rounded-circle">
+                            </td>
+                            <td>
+                                <h3>${travel.name}</h3>
+                            </td>
+                            <td>
+                                <h4>${travel.day}€</h4>
+                            </td>
+                            <td>
+                                <p>${travel.description}</p>
+                            </td>
+                            <td>
+                                <h4>${travel.price}</h4>
+                            </td>
+                            <td>
+                                <a href="/Home/Index" class="btn btn-outline-info">Torna alla home</a>
+                            </td>
+                        </tr>
+                    `;
+    }).catch(error => {
+        console.log("Dati non trovati", error);
+    })
+    function Send(e) {
+        e.preventDefault();
+        axios.post("/api/messageapi/sendmessage", {
+            email: document.querySelector('#contact-email').value,
+            name: document.querySelector('#contact-name').value,
+            title: document.querySelector('#contact-title').value,
+            text: document.querySelector('#contact-text').value,
+        })
+            .then(res => {
+                document.querySelector('#contact-email').value = '';
+                document.querySelector('#contact-name').value = '';
+                document.querySelector('#contact-title').value = '';
+                document.querySelector('#contact-text').value = '';
+                alert('Messaggio inviato correttamente');
+            })
+            .catch(error => {
+                alert('Si è verificato un errore ma da buon programma non ti dico dove');
+            })
+    }
+</script>
