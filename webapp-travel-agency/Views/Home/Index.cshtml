@@ -12,13 +12,13 @@
             <h3>Non è selezionato alcun viaggio</h3>
         </div>
     </div>
-    <div class="row">
+    <div class="travelContainer">
         @*qui verranno mostrati gli elementi*@
     </div>
 </body>
 
 <script type="text/javascript">
-    const Travel = document.querySelector(".row");
+    const Travel = document.querySelector(".travelContainer");
     const Search = document.querySelector(".js-search")
     let list;
     Search.addEventListener("keyup", cerca)
@@ -27,18 +27,15 @@
         risultati(Name);
     }
     function risultati(Name) {
-        axios.get("/api/TravelApi/get", {
+        axios.get("/api/TravelApi/Get", {
             params: {
                 Name: Name
             }
         })
             .then(function (response) {
-                console.log(response);
-                list = response.data;
-                if (list.length > 0) {
-                    Travel.innerHTML = ""
-                    list.forEach(el => {
-                        Travel.innerHTML +=
+                console.log("Nessun viaggio trovato", response);
+                response.data.forEach(travel => {
+                    Travel.innerHTML +=
                             `
                                 <div class="travelCard">
                                     <span class="invisible">${el.count}</span>
@@ -54,7 +51,7 @@
                             `
                     } )
                 } else {
-                    Actor.innerHTML = "<h1>non ci sono viaggi</h1>"
+                    Travel.innerHTML = "<h1>non ci sono viaggi</h1>"
                 }
             })
             .catch(function (error) {
