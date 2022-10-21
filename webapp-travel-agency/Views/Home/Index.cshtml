@@ -23,13 +23,13 @@
     let list;
     Search.addEventListener("keyup", cerca)
     function cerca() {
-        let name = this.value;
-        risultati(name);
+        let Name = this.value;
+        risultati(Name);
     }
-    function risultati(name) {
-        axios.get("/api/travelapi/get", {
+    function risultati(Name) {
+        axios.get("/api/TravelApi/get", {
             params: {
-                name: name
+                Name: Name
             }
         })
             .then(function (response) {
@@ -47,7 +47,7 @@
                                 </div>
                                         <h2>${el.Name}</h2>
                                         <p>${el.Description}</p>
-                                        <p>Giorni totali del viaggio: ${el.Dayt}</p>
+                                        <p>Giorni totali del viaggio: ${el.Day}</p>
                                         <p>Destinazioni del viaggio: ${el.Destination}</p>
                                         <p>Prezzo: ${el.Price} €</p>
                             </div>
